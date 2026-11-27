@@ -31,6 +31,20 @@ public class CommandProcessor {
             case "INVENTORY":
                 printInventory();
                 break;
+            case "BORROW": {
+                int dueDay = library.borrowItem(parts[1], parts[2]);
+                if (dueDay >= 0) {
+                    System.out.println("OK due on day " + dueDay);
+                }
+                break;
+            }
+            case "RETURN": {
+                double fine = library.returnItem(parts[1]);
+                if (fine >= 0) {
+                    System.out.println("OK fine " + (long) fine);
+                }
+                break;
+            }
             default:
                 // BORROW, RETURN, ADVANCE, SEARCH, LOANS, OVERDUE come in later steps
                 throw new InvalidInputException("command not implemented yet: " + parts[0]);

@@ -30,4 +30,58 @@ public class LibrarySystem {
     public Loan getLoan(String itemId) {
         return loans.get(itemId);
     }
+        public int borrowItem(String memberId, String itemId) {
+        // Check order follows the spec's error table
+        LibraryItem item = items.get(itemId);
+        if (item == null) {
+            System.out.println("ERROR item " + itemId + " not found");              // TEMP
+            return -1;
+        }
+        Member member = members.get(memberId);
+        if (member == null) {
+            System.out.println("ERROR member " + memberId + " not found");          // TEMP
+            return -1;
+        }
+        if (!(item instanceof Borrowable)) {
+            System.out.println("ERROR " + itemId + " cannot be borrowed");           // TEMP
+            return -1;
+        }
+        if (loans.containsKey(itemId)) {
+            System.out.println("ERROR " + itemId + " is on loan");                   // TEMP
+            return -1;
+        }
+        if (countLoans(memberId) >= member.getMaxItems()) {
+            System.out.println("ERROR " + memberId + " has reached the limit of "
+                    + member.getMaxItems());                                         // TEMP
+            return -1;
+        }
+
+        Loan loan = new Loan(member, item, today);
+        loans.put(itemId, loan);
+        return loan.getDueDay();
+    }
+
+    public double returnItem(String itemId) {
+        if (!items.containsKey(itemId)) {
+            System.out.println("ERROR item " + itemId + " not found");                // TEMP
+            return -1;
+        }
+        Loan loan = loans.get(itemId);
+        if (loan == null) {
+            System.out.println("ERROR " + itemId + " is not on loan");               // TEMP
+            return -1;
+        }
+        loans.remove(itemId);
+        return 0;   // TEMP: real fine is added in step 10
+    }
+
+    private int countLoans(String memberId) {
+        int count = 0;
+        for (Loan loan : loans.values()) {
+            if (loan.getMember().getId().equals(memberId)) {
+                count++;
+            }
+        }
+        return count;
+    }
 }
