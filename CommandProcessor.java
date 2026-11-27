@@ -47,8 +47,43 @@ public class CommandProcessor {
                 System.out.println("OK today is day " + library.getToday());
                 break;
             }
+            case "SEARCH": {
+                List<LibraryItem> found = library.search(parts[1]);
+                if (found.isEmpty()) {
+                    System.out.println("NONE");
+                } 
+                else {
+                    for (LibraryItem item : found) {
+                        System.out.println(item.getId() + "|" + item.getType() + "|" + item.getTitle());
+                    }
+                }
+                break;
+            }
+            case "LOANS": {
+                List<Loan> memberLoans = library.getMemberLoans(parts[1]);
+                if (memberLoans.isEmpty()) {
+                    System.out.println("NONE");
+                } else {
+                    for (Loan loan : memberLoans) {
+                        System.out.println(loan.getItem().getId() + "|" + loan.getItem().getTitle()+ "|" + loan.getDueDay());
+                    }
+                }
+                break;
+            }
+            case "OVERDUE": {
+                List<Loan> overdue = library.getOverdueLoans();
+                if (overdue.isEmpty()) {
+                    System.out.println("NONE");
+                } 
+                else {
+                    int today = library.getToday();
+                    for (Loan loan : overdue) {
+                        System.out.println(loan.getItem().getId() + "|" + loan.getMember().getId()+ "|" + loan.getDaysLate(today)+ "|" + (long) loan.calculateFine(today));
+                    }
+                }
+                break;
+            }
             default:
-                // BORROW, RETURN, ADVANCE, SEARCH, LOANS, OVERDUE come in later steps
                 throw new InvalidInputException("command not implemented yet: " + parts[0]);
         }
     }

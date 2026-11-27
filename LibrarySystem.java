@@ -85,4 +85,36 @@ public class LibrarySystem {
         loans.remove(itemId);
         return fine;
     }
+    public List<LibraryItem> search(String text) {
+        String needle = text.toLowerCase();
+        List<LibraryItem> result = new ArrayList<>();
+        for (LibraryItem item : items.values()) {
+            if (item.getTitle().toLowerCase().contains(needle)) {
+                result.add(item);
+            }
+        }
+        result.sort(Comparator.comparing(LibraryItem::getTitle).thenComparing(LibraryItem::getId));
+        return result;
+    }
+    public List<Loan> getMemberLoans(String memberId) throws LibraryException {
+        findMember(memberId);   
+        List<Loan> result = new ArrayList<>();
+        for (Loan loan : loans.values()) {
+            if (loan.getMember().getId().equals(memberId)) {
+                result.add(loan);
+            }
+        }
+        result.sort(Comparator.comparingInt(Loan::getDueDay).thenComparing(loan -> loan.getItem().getId()));
+        return result;
+    }
+    public List<Loan> getOverdueLoans() {
+        List<Loan> result = new ArrayList<>();
+        for (Loan loan : loans.values()) {
+            if (loan.getDaysLate(today) > 0) {
+                result.add(loan);
+            }
+        }
+        result.sort(Comparator.comparingInt((Loan loan) -> loan.getDaysLate(today)).reversed().thenComparing(loan -> loan.getItem().getId()));
+        return result;
+    }
 }
