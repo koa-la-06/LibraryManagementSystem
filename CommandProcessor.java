@@ -33,16 +33,12 @@ public class CommandProcessor {
                 break;
             case "BORROW": {
                 int dueDay = library.borrowItem(parts[1], parts[2]);
-                if (dueDay >= 0) {
-                    System.out.println("OK due on day " + dueDay);
-                }
+                System.out.println("OK due on day " + dueDay);
                 break;
             }
             case "RETURN": {
                 double fine = library.returnItem(parts[1]);
-                if (fine >= 0) {
-                    System.out.println("OK fine " + (long) fine);
-                }
+                System.out.println("OK fine " + (long) fine);
                 break;
             }
             case "ADVANCE": {
