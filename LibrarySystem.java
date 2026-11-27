@@ -7,7 +7,7 @@ import java.util.Map;
 public class LibrarySystem {
     private Map<String, LibraryItem> items;
     private Map<String, Member> members;
-    private Map<String, Loan> loans;   // keyed by item ID
+    private Map<String, Loan> loans;  
     private int today;
 
     public LibrarySystem() {
@@ -34,25 +34,24 @@ public class LibrarySystem {
         // Check order follows the spec's error table
         LibraryItem item = items.get(itemId);
         if (item == null) {
-            System.out.println("ERROR item " + itemId + " not found");              // TEMP
+            System.out.println("ERROR item " + itemId + " not found");              
             return -1;
         }
         Member member = members.get(memberId);
         if (member == null) {
-            System.out.println("ERROR member " + memberId + " not found");          // TEMP
+            System.out.println("ERROR member " + memberId + " not found");          
             return -1;
         }
         if (!(item instanceof Borrowable)) {
-            System.out.println("ERROR " + itemId + " cannot be borrowed");           // TEMP
+            System.out.println("ERROR " + itemId + " cannot be borrowed");           
             return -1;
         }
         if (loans.containsKey(itemId)) {
-            System.out.println("ERROR " + itemId + " is on loan");                   // TEMP
+            System.out.println("ERROR " + itemId + " is on loan");                   
             return -1;
         }
         if (countLoans(memberId) >= member.getMaxItems()) {
-            System.out.println("ERROR " + memberId + " has reached the limit of "
-                    + member.getMaxItems());                                         // TEMP
+            System.out.println("ERROR " + memberId + " has reached the limit of "+ member.getMaxItems());                                         
             return -1;
         }
 
@@ -60,21 +59,6 @@ public class LibrarySystem {
         loans.put(itemId, loan);
         return loan.getDueDay();
     }
-
-    public double returnItem(String itemId) {
-        if (!items.containsKey(itemId)) {
-            System.out.println("ERROR item " + itemId + " not found");                // TEMP
-            return -1;
-        }
-        Loan loan = loans.get(itemId);
-        if (loan == null) {
-            System.out.println("ERROR " + itemId + " is not on loan");               // TEMP
-            return -1;
-        }
-        loans.remove(itemId);
-        return 0;   // TEMP: real fine is added in step 10
-    }
-
     private int countLoans(String memberId) {
         int count = 0;
         for (Loan loan : loans.values()) {
@@ -83,5 +67,25 @@ public class LibrarySystem {
             }
         }
         return count;
+    }
+    public void advanceDays(int days) {
+        today += days;
+    }
+    public int getToday() {
+        return today;
+    }
+    public double returnItem(String itemId) {
+        if (!items.containsKey(itemId)) {
+            System.out.println("ERROR item " + itemId + " not found");                
+            return -1;
+        }
+        Loan loan = loans.get(itemId);
+        if (loan == null) {
+            System.out.println("ERROR " + itemId + " is not on loan");               
+            return -1;
+        }
+        double fine = loan.calculateFine(today);
+        loans.remove(itemId);
+        return fine;
     }
 }

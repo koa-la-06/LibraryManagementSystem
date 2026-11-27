@@ -45,6 +45,12 @@ public class CommandProcessor {
                 }
                 break;
             }
+            case "ADVANCE": {
+                int days = validator.validateInteger(parts[1]);
+                library.advanceDays(days);
+                System.out.println("OK today is day " + library.getToday());
+                break;
+            }
             default:
                 // BORROW, RETURN, ADVANCE, SEARCH, LOANS, OVERDUE come in later steps
                 throw new InvalidInputException("command not implemented yet: " + parts[0]);

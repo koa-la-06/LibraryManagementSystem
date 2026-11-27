@@ -22,4 +22,11 @@ public class Loan {
     public int getDueDay() {
         return dueDay;
     }
+    public int getDaysLate(int today) {
+        return Math.max(0, today - dueDay);
+    }
+    public double calculateFine(int today) {
+        Borrowable borrowable = (Borrowable) item;
+        return getDaysLate(today) * borrowable.getFinePerDay();
+    }
 }
