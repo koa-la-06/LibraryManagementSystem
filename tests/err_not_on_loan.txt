@@ -1,0 +1,4 @@
+ADD_BOOK|B1|Algorithms|Cormen
+ADD_REFERENCE|R1|Mahabharata|Vyasa
+RETURN|B1
+RETURN|R1

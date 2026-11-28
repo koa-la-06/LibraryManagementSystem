@@ -1,0 +1,3 @@
+ADD_BOOK|B1|Algorithms|Cormen
+BORROW|X9|B1
+LOANS|X9

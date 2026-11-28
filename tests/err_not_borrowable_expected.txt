@@ -1,0 +1,4 @@
+OK
+OK
+ERROR R1 cannot be borrowed
+R1|REFERENCE|NOT_BORROWABLE

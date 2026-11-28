@@ -1,0 +1,4 @@
+OK
+OK
+ERROR B1 is not on loan
+ERROR R1 is not on loan
