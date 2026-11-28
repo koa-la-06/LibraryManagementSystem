@@ -16,6 +16,7 @@ public class InputValidator {
                 expected = 4;
                 break;
             case "BORROW":
+            case "RESERVE":
                 expected = 3;
                 break;
             case "RETURN":

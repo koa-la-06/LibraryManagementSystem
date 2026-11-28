@@ -37,8 +37,18 @@ public class CommandProcessor {
                 break;
             }
             case "RETURN": {
-                double fine = library.returnItem(parts[1]);
-                System.out.println("OK fine " + (long) fine);
+                ReturnResult result = library.returnItem(parts[1]);
+                String line = "OK fine " + (long) result.getFine();
+                Loan issued = result.getIssuedLoan();
+                if (issued != null) {
+                    line += ", issued to " + issued.getMember().getId()+ " due on day " + issued.getDueDay();
+                }
+                System.out.println(line);
+                break;
+            }
+            case "RESERVE": {
+                library.reserveItem(parts[1], parts[2]);
+                System.out.println("OK reserved");
                 break;
             }
             case "ADVANCE": {

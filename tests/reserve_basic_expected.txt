@@ -1,0 +1,14 @@
+OK
+OK
+OK
+OK
+ERROR B1 is available
+OK due on day 14
+ERROR S1 already has B1
+OK reserved
+ERROR T1 already reserved B1
+OK reserved
+OK today is day 20
+OK fine 12, issued to T1 due on day 41
+OK fine 0, issued to F1 due on day 50
+B1|BOOK|ON_LOAN|F1

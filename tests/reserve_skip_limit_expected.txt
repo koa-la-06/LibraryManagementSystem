@@ -1,0 +1,20 @@
+OK
+OK
+OK
+OK
+OK
+OK
+OK
+OK due on day 14
+OK due on day 14
+OK due on day 14
+OK due on day 21
+OK reserved
+OK reserved
+OK fine 0, issued to F1 due on day 30
+OK fine 0
+OK fine 0, issued to S1 due on day 14
+B1|BOOK|AVAILABLE
+B2|BOOK|ON_LOAN|S1
+B3|BOOK|ON_LOAN|S1
+B4|BOOK|ON_LOAN|S1

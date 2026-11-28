@@ -9,12 +9,14 @@ public class LibrarySystem {
     private Map<String, Member> members;
     private Map<String, Loan> loans;  
     private int today;
+    private Map<String, List<String>> reservations;
 
     public LibrarySystem() {
         items = new HashMap<>();
         members = new HashMap<>();
         loans = new HashMap<>();
         today = 0;
+        reservations = new HashMap<>();
     }
     public void addItem(LibraryItem item) {
         items.put(item.getId(), item);
@@ -75,16 +77,6 @@ public class LibrarySystem {
         loans.put(itemId, loan);
         return loan.getDueDay();
     }
-    public double returnItem(String itemId) throws LibraryException {
-        findItem(itemId);   
-        Loan loan = loans.get(itemId);
-        if (loan == null) {
-            throw new ItemNotOnLoanException(itemId);
-        }
-        double fine = loan.calculateFine(today);
-        loans.remove(itemId);
-        return fine;
-    }
     public List<LibraryItem> search(String text) {
         String needle = text.toLowerCase();
         List<LibraryItem> result = new ArrayList<>();
@@ -116,5 +108,55 @@ public class LibrarySystem {
         }
         result.sort(Comparator.comparingInt((Loan loan) -> loan.getDaysLate(today)).reversed().thenComparing(loan -> loan.getItem().getId()));
         return result;
+    }
+    public void reserveItem(String memberId, String itemId) throws LibraryException {
+        // Unknown IDs and non-borrowable items give the same errors as BORROW
+        LibraryItem item = findItem(itemId);
+        findMember(memberId);
+        if (!(item instanceof Borrowable)) {
+            throw ItemNotAvailableException.notBorrowable(itemId);
+        }
+
+        Loan loan = loans.get(itemId);
+        if (loan == null) {
+            throw ReservationNotAllowedException.available(itemId);
+        }
+        if (loan.getMember().getId().equals(memberId)) {
+            throw ReservationNotAllowedException.alreadyHolds(memberId, itemId);
+        }
+
+        List<String> queue = reservations.computeIfAbsent(itemId, k -> new ArrayList<>());
+        if (queue.contains(memberId)) {
+            throw ReservationNotAllowedException.alreadyReserved(memberId, itemId);
+        }
+        queue.add(memberId);
+    }
+    public ReturnResult returnItem(String itemId) throws LibraryException {
+        findItem(itemId);
+        Loan loan = loans.get(itemId);
+        if (loan == null) {
+            throw new ItemNotOnLoanException(itemId);
+        }
+        double fine = loan.calculateFine(today);
+        loans.remove(itemId);
+
+        Loan issued = issueToNextInQueue(itemId);
+        return new ReturnResult(fine, issued);
+    }
+    private Loan issueToNextInQueue(String itemId) {
+        List<String> queue = reservations.get(itemId);
+        if (queue == null) {
+            return null;
+        }
+        for (int i = 0; i < queue.size(); i++) {
+            Member candidate = members.get(queue.get(i));
+            if (countLoans(candidate.getId()) < candidate.getMaxItems()) {
+                queue.remove(i);   // remove by index; members at their limit stay in the queue
+                Loan newLoan = new Loan(candidate, items.get(itemId), today);
+                loans.put(itemId, newLoan);
+                return newLoan;
+            }
+        }
+        return null;
     }
 }
